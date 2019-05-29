@@ -21,6 +21,10 @@ typedef struct {
 } NumArr_t;
 
 static void inputArr(NumArr_t **ptr);
+static void eachArr(NumArr_t *arr, size_t offset, void *data, void (*callback)(double, size_t, void *));
+static void posCounter(double element, size_t idx, void *counter);
+static void findLastZero(double element, size_t idx, void *zeroIdx);
+static void sum(double element, size_t idx, void *sum);
 
 int main(void) {
   printf("Number sequences.\n");
@@ -28,12 +32,36 @@ int main(void) {
   NumArr_t *arr;
   inputArr(&arr);
 
+  size_t posCount = 0;
+  double afterZeroSum = 0;
+  ssize_t lastZeroIdx = -1;
+
+  eachArr(arr, 0, &posCount, posCounter);
+
+  eachArr(arr, 0, &lastZeroIdx, findLastZero);
+  if (lastZeroIdx >= 0) {
+    printf("\tLast zero idx: %zd\n", lastZeroIdx);
+    eachArr(arr, lastZeroIdx, &afterZeroSum, sum);
+  }
+  else {
+    printf("\tZero element not found.");
+  }
+
+  printf("\n\n");
+  printf("Positive numbers: %zd\n", posCount);
+  printf("After last zero summ: %.3lf\n", afterZeroSum);
+
   return 0;
 }
 
 static void inputArr(NumArr_t **ptr) {
   NumArr_t *arr = (NumArr_t *) malloc(sizeof(NumArr_t));
   double *data = (double *) calloc(INIT_DATA_SLOTS, sizeof(double));
+
+  if (arr == NULL || data == NULL) {
+    bang(strerror(errno));
+  }
+
   arr->allocated = INIT_DATA_SLOTS;
   arr->size = 0;
   arr->data = data;
@@ -69,10 +97,12 @@ static void inputArr(NumArr_t **ptr) {
         }
       }
 
-      printf("\t Recived: %.3lf\n", number);
+      size_t idx = arr->size;
 
+      printf("\t [%3zd] Recived: %.3lf\n", idx, number);
+
+      arr->data[idx] = number;
       arr->size++;
-      arr->data[arr->size - 1] = number;
     }
     else {
       printf("\tRecived %zd numbers.\n", arr->size);
@@ -81,4 +111,29 @@ static void inputArr(NumArr_t **ptr) {
   } while (true);
 
   *ptr = arr;
+}
+
+static void eachArr(NumArr_t *arr, size_t offset, void *data, void (*callback)(double, size_t, void *)) {
+  size_t i = 0 + offset;
+  double element;
+  for (; i < arr->size; i++) {
+    element = arr->data[i];
+    (*callback)(element, i, data);
+  }
+}
+
+static void posCounter(double element, size_t idx, void *counter) {
+  if (element > 0) {
+    *((size_t *) counter) += 1;
+  }
+}
+
+static void findLastZero(double element, size_t idx, void *lastZeroIdx) {
+  if (element == 0) {
+    *((ssize_t *) lastZeroIdx) = idx;
+  }
+}
+
+static void sum(double element, size_t idx, void *sum) {
+  *((double *) sum) += element;
 }
