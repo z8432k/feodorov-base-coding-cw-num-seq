@@ -25,6 +25,8 @@ static void eachArr(NumArr_t *arr, size_t offset, void *data, void (*callback)(d
 static void posCounter(double element, size_t idx, void *counter);
 static void findLastZero(double element, size_t idx, void *zeroIdx);
 static void sum(double element, size_t idx, void *sum);
+static int comparator(const void * a, const void *b);
+static void printArr(NumArr_t *arr);
 
 int main(void) {
   printf("Number sequences.\n");
@@ -37,8 +39,8 @@ int main(void) {
   ssize_t lastZeroIdx = -1;
 
   eachArr(arr, 0, &posCount, posCounter);
-
   eachArr(arr, 0, &lastZeroIdx, findLastZero);
+
   if (lastZeroIdx >= 0) {
     printf("\tLast zero idx: %zd\n", lastZeroIdx);
     eachArr(arr, lastZeroIdx, &afterZeroSum, sum);
@@ -47,9 +49,13 @@ int main(void) {
     printf("\tZero element not found.");
   }
 
+  qsort(arr->data, arr->size, sizeof(double), comparator);
+
   printf("\n\n");
   printf("Positive numbers: %zd\n", posCount);
   printf("After last zero summ: %.3lf\n", afterZeroSum);
+  printf("Sorted array:\n");
+  printArr(arr);
 
   return 0;
 }
@@ -136,4 +142,27 @@ static void findLastZero(double element, size_t idx, void *lastZeroIdx) {
 
 static void sum(double element, size_t idx, void *sum) {
   *((double *) sum) += element;
+}
+
+static int comparator(const void *a, const void *b) {
+  int result = 0;
+  double aInt, bInt;
+
+  modf(*(double *) a, &aInt);
+  modf(*(double *) b, &bInt);
+
+  result -= aInt <= 1;
+  result += bInt <= 1;
+
+  return result;
+}
+
+static void printEl(double el, size_t idx, void *data) {
+  printf("\t[%3zd, %5.3lf]\n", idx, el);
+}
+
+static void printArr(NumArr_t *arr) {
+  printf("[\n");
+  eachArr(arr, 0, NULL, printEl);
+  printf("]\n\n");
 }
