@@ -11,29 +11,55 @@
 #include "include/error.h"
 #include "include/array.h"
 
-void inputArr(NumArr_t **ptr) {
-  NumArr_t *arr = (NumArr_t *) malloc(sizeof(NumArr_t));
+static ssize_t readNumber(double *element) {
+  char *line = NULL;
+  ssize_t lineSize;
+  size_t bufLen = 0;
+
+  lineSize = getline(&line, &bufLen, stdin);
+  *element = strtod(line, NULL);
+
+  return lineSize;
+}
+
+static void pushArr(NumArr_t *arr, double number) {
+  if (arr->size >= arr->allocated) {
+    arr->data = (double *) realloc(arr->data, (arr->allocated *= 2) * sizeof(double));
+    if (arr->data == NULL) {
+      bang(strerror(errno));
+    }
+  }
+
+  size_t idx = arr->size;
+
+  printf("\t [%3zd] Recived: %.3lf\n", idx, number);
+
+  arr->data[idx] = number;
+  arr->size++;
+}
+
+void createArr(NumArr_t **arr) {
+  *arr = (NumArr_t *) malloc(sizeof(NumArr_t));
   double *data = (double *) calloc(INIT_DATA_SLOTS, sizeof(double));
 
   if (arr == NULL || data == NULL) {
     bang(strerror(errno));
   }
 
-  arr->allocated = INIT_DATA_SLOTS;
-  arr->size = 0;
-  arr->data = data;
+  (*arr)->allocated = INIT_DATA_SLOTS;
+  (*arr)->size = 0;
+  (*arr)->data = data;
+}
 
-  char *line = NULL;
-  size_t bufLen = 0;
-  ssize_t lineSize;
+void inputArr(NumArr_t **arr) {
+  createArr(arr);
+
   double number;
 
   printf("Input numbers one by one. Press enter after each. Press enter for finish: \n");
 
   do {
-    lineSize = getline(&line, &bufLen, stdin);
-
-    number = strtod(line, NULL);
+    ssize_t lineSize = readNumber(&number);
 
     if (errno > 0) {
       fprintf(stderr, "\tError: %s\nTry again:\n", strerror(errno));
@@ -47,27 +73,13 @@ void inputArr(NumArr_t **ptr) {
     }
 
     if (lineSize > 1) {
-      if (arr->size >= arr->allocated) {
-        arr->data = (double *) realloc(arr->data, (arr->allocated *= 2) * sizeof(double));
-        if (arr->data == NULL) {
-          bang(strerror(errno));
-        }
-      }
-
-      size_t idx = arr->size;
-
-      printf("\t [%3zd] Recived: %.3lf\n", idx, number);
-
-      arr->data[idx] = number;
-      arr->size++;
+      pushArr(*arr, number);
     }
     else {
-      printf("\tRecived %zd numbers.\n", arr->size);
+      printf("\tRecived %zd numbers.\n", (*arr)->size);
       break;
     }
   } while (true);
-
-  *ptr = arr;
 }
 
 void eachArr(NumArr_t *arr, size_t offset, void *data, void (*callback)(double, size_t, void *)) {
