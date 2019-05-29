@@ -22,7 +22,7 @@ static ssize_t readNumber(double *element) {
   return lineSize;
 }
 
-static void pushArr(NumArr_t *arr, double number) {
+void pushArr(NumArr_t *arr, const double number) {
   if (arr->size >= arr->allocated) {
     arr->data = (double *) realloc(arr->data, (arr->allocated *= 2) * sizeof(double));
     if (arr->data == NULL) {
@@ -82,7 +82,7 @@ void inputArr(NumArr_t **arr) {
   } while (true);
 }
 
-void eachArr(NumArr_t *arr, size_t offset, void *data, void (*callback)(double, size_t, void *)) {
+void eachArr(const NumArr_t *arr, size_t offset, void *data, void (*callback)(double, size_t, void *)) {
   size_t i = 0 + offset;
   double element;
   for (; i < arr->size; i++) {
@@ -91,6 +91,6 @@ void eachArr(NumArr_t *arr, size_t offset, void *data, void (*callback)(double, 
   }
 }
 
-void sortArr(NumArr_t *arr, int (*comparator)(const void *a, const void *b)) {
+void sortArr(const NumArr_t *arr, int (*comparator)(const void *a, const void *b)) {
   qsort(arr->data, arr->size, sizeof(double), comparator);
 }
