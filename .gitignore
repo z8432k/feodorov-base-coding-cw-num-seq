@@ -54,3 +54,4 @@ dkms.conf
 tmp/
 .vscode/ipch/
 bin/*
+glibc-2.23/
