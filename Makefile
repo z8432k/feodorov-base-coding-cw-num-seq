@@ -4,13 +4,16 @@ LDLIBS =
 
 default: bin/$(PROGRAM)
 
-bin/$(PROGRAM): bin/$(PROGRAM).o bin/error.o
+bin/$(PROGRAM): bin/$(PROGRAM).o bin/error.o bin/array.o
 	$(CC) $^ $(LDLIBS) -o $@
 
 bin/$(PROGRAM).o: src/$(PROGRAM).c
 	$(CC) $(CFLAGS) -o $@ -c $<
 
 bin/error.o: src/error.c
+	$(CC) $(CFLAGS) -o $@ -c $<
+
+bin/array.o: src/array.c
 	$(CC) $(CFLAGS) -o $@ -c $<
 
 clean:
