@@ -94,3 +94,8 @@ void eachArr(const NumArr_t *arr, size_t offset, void *data, void (*callback)(do
 void sortArr(const NumArr_t *arr, int (*comparator)(const void *a, const void *b)) {
   qsort(arr->data, arr->size, sizeof(double), comparator);
 }
+
+void freeArr(NumArr_t *arr) {
+  free(arr->data);
+  free(arr);
+}

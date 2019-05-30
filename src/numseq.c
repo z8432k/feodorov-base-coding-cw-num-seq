@@ -41,6 +41,8 @@ int main(void) {
   printf("Sorted array:\n");
   printArr(arr);
 
+  freeArr(arr);
+
   return 0;
 }
 

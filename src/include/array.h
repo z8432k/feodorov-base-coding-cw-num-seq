@@ -13,3 +13,4 @@ void pushArr(NumArr_t *arr, const double number);
 void inputArr(NumArr_t **ptr);
 void eachArr(const NumArr_t *arr, const size_t offset, void *data, void (*callback)(double, size_t, void *));
 void sortArr(const NumArr_t *arr, int (*comparator)(const void *a, const void *b));
+void freeArr(NumArr_t *arr);
