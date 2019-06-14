@@ -37,7 +37,12 @@ int main(void) {
 
   printf("\n\n");
   printf("Positive numbers: %zd\n", posCount);
-  printf("After last zero summ: %.3lf\n", afterZeroSum);
+  if (lastZeroIdx >= 0) {
+    printf("After last zero summ: %.3lf\n", afterZeroSum);
+  }
+  else if (lastZeroIdx < 0) {
+    printf("After zero is sum not calculated.\n");
+  }
   printf("Sorted array:\n");
   printArr(arr);
 
