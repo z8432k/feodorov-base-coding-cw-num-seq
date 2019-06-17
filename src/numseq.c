@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 #include <math.h>
+#include <stdbool.h>
 
 #include "include/array.h"
 
@@ -11,6 +12,7 @@ static void sum(double element, size_t idx, void *sum);
 static int comparator(const void * a, const void *b);
 static void printArr(NumArr_t *arr);
 static void printEl(double el, size_t idx, void *data);
+static void bubbleSort(double array[], size_t asize, int (*comparator)(const void *a, const void *b));
 
 int main(void) {
   printf("Number sequences.\n");
@@ -33,16 +35,19 @@ int main(void) {
     printf("\tZero element not found.");
   }
 
-  sortArr(arr, comparator);
+  /*  sortArr(arr, comparator); */
+  bubbleSort(arr->data, arr->size, comparator);
 
   printf("\n\n");
   printf("Positive numbers: %zd\n", posCount);
+
   if (lastZeroIdx >= 0) {
     printf("After last zero summ: %.3lf\n", afterZeroSum);
   }
   else if (lastZeroIdx < 0) {
-    printf("After zero is sum not calculated.\n");
+    printf("After zero sum not calculated.\n");
   }
+
   printf("Sorted array:\n");
   printArr(arr);
 
@@ -89,4 +94,24 @@ static void printArr(NumArr_t *arr) {
 
 static void printEl(double el, size_t idx, void *data) {
   printf("\t[%3zd, %5.3lf]\n", idx, el);
+}
+
+static void bubbleSort(double array[], size_t asize, int (*comparator)(const void *a, const void *b)) {
+  double tmp;
+  bool swap = false;
+
+  size_t i = 0;
+  for (; i < asize - 1; i++) {
+
+    size_t j = 0;
+    for (; j < asize - i - 1; j++) {
+      int needSwap = comparator(&array[j], &array[j + 1]);
+
+      if (needSwap > 0) {
+        tmp = array[j];
+        array[j] = array[j + 1];
+        array[j + 1] = tmp;
+      }
+    }
+  }
 }
