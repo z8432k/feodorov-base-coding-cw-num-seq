@@ -1,4 +1,5 @@
 # feodorov-base-coding-cw-num-seq
+[![Build Status](https://travis-ci.org/z8432k/feodorov-base-coding-cw-num-seq-17.svg?branch=master)](https://travis-ci.org/z8432k/feodorov-base-coding-cw-num-seq-17)
 
 SUAI - Основы программирования. Контр. работа: Обработка числовых последовательностей - Вариант 17
 
